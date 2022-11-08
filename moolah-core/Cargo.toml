@@ -1,0 +1,12 @@
+[package]
+name = "moolah-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Moolah's core functionality"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4"
+thiserror = "1.0.37"
