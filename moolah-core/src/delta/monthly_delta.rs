@@ -7,7 +7,7 @@ use chrono::{Datelike, Local, NaiveDate};
 
 pub struct MonthlyDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     start: NaiveDate,
     end: NaiveDate,
@@ -52,16 +52,14 @@ fn build_dates(
         NaiveDate::from_ymd(end.year(), end.month() - 1, month_day)
     };
 
-    let year_diff: u32 = ((end.year() - start.year()) * 12)
-        .try_into()
-        .expect("could not create u32 for gap_months");
+    let year_diff = (end.year() - start.year()) * 12;
+    let month_diff: i32 = end.month() as i32 - start.month() as i32;
+    let n_tot_months: i32 = year_diff + month_diff;
 
-    if start.month() > end.month() {
+    if n_tot_months <= 0 {
         return vec![];
     }
-
-    let month_diff = end.month() - start.month();
-    let n_months: u32 = (year_diff + month_diff) / every_months;
+    let n_months: u32 = n_tot_months as u32 / every_months;
 
     let target_month_day = *on_month_day;
     (0..=n_months)
@@ -72,11 +70,11 @@ fn build_dates(
 impl MonthlyDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         start: NaiveDate,
         end: NaiveDate,
-        on_month_day: u8,
+        on_month_day: MonthDay,
         skip_months: u16,
     ) -> Result<Self, MoolahCoreError> {
         if let Some(Uncertainty::Bounds { low, high }) = uncertainty {
@@ -87,17 +85,15 @@ impl MonthlyDelta {
             return Err(MoolahCoreError::StartAfterEnd { start, end });
         }
 
-        let month_day: MonthDay = on_month_day.try_into()?;
-
         Ok(MonthlyDelta {
             name,
             value,
             uncertainty,
             start,
             end,
-            on_month_day: month_day.clone(),
+            on_month_day: on_month_day.clone(),
             skip_months,
-            dates: build_dates(&start, &end, &month_day, (skip_months + 1).into()),
+            dates: build_dates(&start, &end, &on_month_day, (skip_months + 1).into()),
         })
     }
 
@@ -123,7 +119,7 @@ impl Delta for MonthlyDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

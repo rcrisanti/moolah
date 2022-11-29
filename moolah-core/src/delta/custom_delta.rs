@@ -5,7 +5,7 @@ use chrono::NaiveDate;
 #[derive(Default)]
 pub struct CustomDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     dates: Vec<NaiveDate>,
 }
@@ -13,7 +13,7 @@ pub struct CustomDelta {
 impl CustomDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         dates: Vec<NaiveDate>,
     ) -> Result<Self, MoolahCoreError> {
@@ -35,7 +35,7 @@ impl Delta for CustomDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

@@ -8,7 +8,7 @@ use std::collections::{BTreeMap, HashSet};
 pub struct Prediction {
     name: String,
     start: NaiveDate,
-    initial_value: f32,
+    initial_value: f64,
     deltas: Vec<Box<dyn Delta>>,
 }
 
@@ -27,7 +27,7 @@ impl Prediction {
     pub fn new(
         name: String,
         start: NaiveDate,
-        initial_value: f32,
+        initial_value: f64,
         deltas: Vec<Box<dyn Delta>>,
     ) -> Self {
         Prediction {
@@ -46,7 +46,7 @@ impl Prediction {
         &self.start
     }
 
-    pub fn initial_value(&self) -> f32 {
+    pub fn initial_value(&self) -> f64 {
         self.initial_value
     }
 
@@ -57,9 +57,9 @@ impl Prediction {
 
 #[derive(Debug, PartialEq, Default)]
 pub(crate) struct AggregatedDelta<'a> {
-    value: f32,
-    min_uncertainty_val: f32,
-    max_uncertainty_val: f32,
+    value: f64,
+    min_uncertainty_val: f64,
+    max_uncertainty_val: f64,
     impactful_deltas: Vec<&'a str>,
 }
 
@@ -104,17 +104,17 @@ impl Prediction {
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct PredictionState {
-    value: f32,
-    min_uncertainty_val: f32,
-    max_uncertainty_val: f32,
+    value: f64,
+    min_uncertainty_val: f64,
+    max_uncertainty_val: f64,
     impactful_deltas: HashSet<String>,
 }
 
 impl PredictionState {
     pub fn new(
-        value: f32,
-        min_uncertainty_val: f32,
-        max_uncertainty_val: f32,
+        value: f64,
+        min_uncertainty_val: f64,
+        max_uncertainty_val: f64,
         impactful_deltas: HashSet<String>,
     ) -> Self {
         PredictionState {
@@ -123,6 +123,10 @@ impl PredictionState {
             max_uncertainty_val,
             impactful_deltas,
         }
+    }
+
+    pub fn value(&self) -> f64 {
+        self.value
     }
 
     fn from(previous_pred_state: &PredictionState, delta_agg: &AggregatedDelta) -> Self {

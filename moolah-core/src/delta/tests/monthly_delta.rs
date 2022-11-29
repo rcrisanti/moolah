@@ -19,14 +19,23 @@ fn test_default() {
 #[test]
 fn test_start_cannot_be_later_than_end() {
     let d = NaiveDate::from_ymd(2022, 11, 1);
-    assert!(MonthlyDelta::try_new(String::from("test"), 0.0, None, d, d, 1, 0).is_ok());
+    assert!(MonthlyDelta::try_new(
+        String::from("test"),
+        0.0,
+        None,
+        d,
+        d,
+        1.try_into().unwrap(),
+        0
+    )
+    .is_ok());
     assert!(MonthlyDelta::try_new(
         String::from("test"),
         0.0,
         None,
         d,
         d - Duration::days(1),
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_err());
@@ -45,7 +54,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_ok());
@@ -59,7 +68,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_ok());
@@ -73,7 +82,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_ok());
@@ -87,7 +96,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_ok());
@@ -101,7 +110,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_err());
@@ -115,7 +124,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_err());
@@ -129,7 +138,7 @@ fn test_reasonable_bounds() {
         }),
         date,
         date,
-        1,
+        1.try_into().unwrap(),
         0
     )
     .is_err());
@@ -138,7 +147,7 @@ fn test_reasonable_bounds() {
 fn test_monthly_dates(
     start: NaiveDate,
     end: NaiveDate,
-    on_month_day: u8,
+    on_month_day: MonthDay,
     skip_months: u16,
     expected_dates: &[NaiveDate],
 ) {
@@ -197,7 +206,7 @@ fn test_falls_on_month_day_skip_months_0() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 30),
         NaiveDate::from_ymd(2024, 12, 30),
-        30,
+        30.try_into().unwrap(),
         0,
         &expected_dates,
     );
@@ -225,7 +234,7 @@ fn test_falls_on_month_day_skip_months_1() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 30),
         NaiveDate::from_ymd(2024, 12, 30),
-        30,
+        30.try_into().unwrap(),
         1,
         &expected_dates,
     );
@@ -248,7 +257,7 @@ fn test_falls_on_month_day_skip_months_2() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 30),
         NaiveDate::from_ymd(2024, 12, 30),
-        30,
+        30.try_into().unwrap(),
         2,
         &expected_dates,
     );
@@ -269,7 +278,7 @@ fn test_falls_on_month_day_skip_months_3() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 30),
         NaiveDate::from_ymd(2024, 12, 30),
-        30,
+        30.try_into().unwrap(),
         3,
         &expected_dates,
     );
@@ -282,7 +291,7 @@ fn test_falls_on_month_day_skip_months_100() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 30),
         NaiveDate::from_ymd(2024, 12, 30),
-        30,
+        30.try_into().unwrap(),
         100,
         &expected_dates,
     );
@@ -323,7 +332,7 @@ fn test_falls_after_month_day_skip_months_0() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 31),
         NaiveDate::from_ymd(2024, 12, 31),
-        30,
+        30.try_into().unwrap(),
         0,
         &expected_dates,
     );
@@ -350,7 +359,7 @@ fn test_falls_after_month_day_skip_months_1() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 31),
         NaiveDate::from_ymd(2024, 12, 31),
-        30,
+        30.try_into().unwrap(),
         1,
         &expected_dates,
     );
@@ -373,7 +382,7 @@ fn test_falls_after_month_day_skip_months_2() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 31),
         NaiveDate::from_ymd(2024, 12, 31),
-        30,
+        30.try_into().unwrap(),
         2,
         &expected_dates,
     );
@@ -394,7 +403,7 @@ fn test_falls_after_month_day_skip_months_3() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 31),
         NaiveDate::from_ymd(2024, 12, 31),
-        30,
+        30.try_into().unwrap(),
         3,
         &expected_dates,
     );
@@ -407,7 +416,7 @@ fn test_falls_after_month_day_skip_months_100() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 31),
         NaiveDate::from_ymd(2024, 12, 31),
-        30,
+        30.try_into().unwrap(),
         100,
         &expected_dates,
     );
@@ -448,7 +457,7 @@ fn test_falls_before_month_day_skip_months_0() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 29),
         NaiveDate::from_ymd(2024, 12, 12),
-        30,
+        30.try_into().unwrap(),
         0,
         &expected_dates,
     );
@@ -475,7 +484,7 @@ fn test_falls_before_month_day_skip_months_1() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 29),
         NaiveDate::from_ymd(2024, 12, 12),
-        30,
+        30.try_into().unwrap(),
         1,
         &expected_dates,
     );
@@ -498,7 +507,7 @@ fn test_falls_before_month_day_skip_months_2() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 29),
         NaiveDate::from_ymd(2024, 12, 12),
-        30,
+        30.try_into().unwrap(),
         2,
         &expected_dates,
     );
@@ -519,7 +528,7 @@ fn test_falls_before_month_day_skip_months_3() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 29),
         NaiveDate::from_ymd(2024, 12, 12),
-        30,
+        30.try_into().unwrap(),
         3,
         &expected_dates,
     );
@@ -532,7 +541,7 @@ fn test_falls_before_month_day_skip_months_100() {
     test_monthly_dates(
         NaiveDate::from_ymd(2022, 10, 29),
         NaiveDate::from_ymd(2024, 12, 12),
-        30,
+        30.try_into().unwrap(),
         100,
         &expected_dates,
     );

@@ -240,7 +240,7 @@ fn test_prediction_all_delta_types() {
                     ))),
                     start_pred,
                     NaiveDate::from_ymd(2022, 12, 31),
-                    3,
+                    3.try_into().unwrap(),
                     1,
                 )
                 .unwrap(),

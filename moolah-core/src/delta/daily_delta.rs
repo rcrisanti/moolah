@@ -4,7 +4,7 @@ use chrono::{Duration, Local, NaiveDate};
 
 pub struct DailyDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     start: NaiveDate,
     end: NaiveDate,
@@ -39,7 +39,7 @@ fn build_dates(start: &NaiveDate, end: &NaiveDate, every_days: i64) -> Vec<Naive
 impl DailyDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         start: NaiveDate,
         end: NaiveDate,
@@ -82,7 +82,7 @@ impl Delta for DailyDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

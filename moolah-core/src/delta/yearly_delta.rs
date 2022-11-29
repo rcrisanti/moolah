@@ -7,7 +7,7 @@ mod add_years;
 
 pub struct YearlyDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     start: NaiveDate,
     end: NaiveDate,
@@ -50,7 +50,7 @@ fn build_dates(start: &NaiveDate, end: &NaiveDate, every_years: u16) -> Vec<Naiv
 impl YearlyDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         start: NaiveDate,
         end: NaiveDate,
@@ -93,7 +93,7 @@ impl Delta for YearlyDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

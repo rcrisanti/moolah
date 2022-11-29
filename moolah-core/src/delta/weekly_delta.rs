@@ -4,7 +4,7 @@ use chrono::{Datelike, Duration, Local, NaiveDate, Weekday};
 
 pub struct WeeklyDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     start: NaiveDate,
     end: NaiveDate,
@@ -70,7 +70,7 @@ fn build_dates(
 impl WeeklyDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         start: NaiveDate,
         end: NaiveDate,
@@ -124,7 +124,7 @@ impl Delta for WeeklyDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

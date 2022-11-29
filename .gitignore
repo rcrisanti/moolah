@@ -1,2 +1,5 @@
 /target
 /Cargo.lock
+
+# Ignore some specific examples
+moolah-core/examples/2022-11-17_break-lease.rs

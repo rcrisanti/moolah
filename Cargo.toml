@@ -2,7 +2,6 @@
 
 members = [
   "moolah-core",
-  "moolah-cli"
 ]
 
 [workspace.package]
@@ -11,3 +10,9 @@ edition = "2021"
 authors = ["Ryan Crisanti"]
 license-file = "LICENSE"
 readme = "README.md"
+
+[workspace.dependencies]
+tracing = "0.1.37"
+thiserror = "1.0.37"
+chrono = "0.4"
+anyhow = "1.0.66"

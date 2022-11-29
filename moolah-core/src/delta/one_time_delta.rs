@@ -4,7 +4,7 @@ use chrono::{Local, NaiveDate};
 
 pub struct OneTimeDelta {
     name: String,
-    value: f32,
+    value: f64,
     uncertainty: Option<Uncertainty>,
     date: NaiveDate,
     dates: Vec<NaiveDate>,
@@ -26,7 +26,7 @@ impl Default for OneTimeDelta {
 impl OneTimeDelta {
     pub fn try_new(
         name: String,
-        value: f32,
+        value: f64,
         uncertainty: Option<Uncertainty>,
         date: NaiveDate,
     ) -> Result<Self, MoolahCoreError> {
@@ -53,7 +53,7 @@ impl Delta for OneTimeDelta {
         &self.name
     }
 
-    fn value(&self) -> f32 {
+    fn value(&self) -> f64 {
         self.value
     }
 

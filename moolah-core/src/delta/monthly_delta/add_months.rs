@@ -7,6 +7,23 @@ pub struct MonthDay {
     day: u8,
 }
 
+impl MonthDay {
+    pub fn try_new<T: TryInto<u8> + Into<i64> + Clone>(day: T) -> Result<Self, MoolahCoreError> {
+        let value: u8 = day
+            .clone()
+            .try_into()
+            .map_err(|_| MoolahCoreError::MonthDayOutOfRange(day.into()))?;
+        if value > 31 || value < 1 {
+            return Err(MoolahCoreError::MonthDayOutOfRange(value.into()));
+        }
+        Ok(MonthDay {
+            day: value
+                .try_into()
+                .expect("This should never panic bc you already checked the value"),
+        })
+    }
+}
+
 impl Default for MonthDay {
     fn default() -> Self {
         MonthDay { day: 1 }
@@ -17,10 +34,7 @@ impl TryFrom<u8> for MonthDay {
     type Error = MoolahCoreError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        if value > 31 || value < 1 {
-            return Err(MoolahCoreError::MonthDayOutOfRange(value.into()));
-        }
-        Ok(MonthDay { day: value })
+        MonthDay::try_new(value)
     }
 }
 
@@ -28,14 +42,15 @@ impl TryFrom<u32> for MonthDay {
     type Error = MoolahCoreError;
 
     fn try_from(value: u32) -> Result<Self, Self::Error> {
-        if value > 31 || value < 1 {
-            return Err(MoolahCoreError::MonthDayOutOfRange(value));
-        }
-        Ok(MonthDay {
-            day: value
-                .try_into()
-                .expect("This should never panic bc you already checked the value"),
-        })
+        MonthDay::try_new(value)
+    }
+}
+
+impl TryFrom<i32> for MonthDay {
+    type Error = MoolahCoreError;
+
+    fn try_from(value: i32) -> Result<Self, Self::Error> {
+        MonthDay::try_new(value)
     }
 }
 

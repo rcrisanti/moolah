@@ -18,25 +18,23 @@ pub use one_time_delta::OneTimeDelta;
 pub use weekly_delta::WeeklyDelta;
 pub use yearly_delta::YearlyDelta;
 
-pub struct PositiveF32 {
-    value: f32,
-}
+pub struct PositiveF64(f64);
 
-impl TryFrom<f32> for PositiveF32 {
+impl TryFrom<f64> for PositiveF64 {
     type Error = MoolahCoreError;
 
-    fn try_from(value: f32) -> Result<Self, Self::Error> {
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
         if value < 0.0 {
             Err(MoolahCoreError::UnexpectedNegative(value))
         } else {
-            Ok(PositiveF32 { value })
+            Ok(PositiveF64(value))
         }
     }
 }
 
 pub enum UncertaintyType {
-    Dollars(PositiveF32),
-    Percent(PositiveF32),
+    Dollars(PositiveF64),
+    Percent(PositiveF64),
 }
 
 pub enum Uncertainty {
@@ -46,12 +44,12 @@ pub enum Uncertainty {
         high: UncertaintyType,
     },
     Bounds {
-        low: f32,
-        high: f32,
+        low: f64,
+        high: f64,
     },
 }
 
-fn reasonable_bounds(low: f32, high: f32, value: f32) -> Result<(), MoolahCoreError> {
+pub fn reasonable_bounds(low: f64, high: f64, value: f64) -> Result<(), MoolahCoreError> {
     if (low <= value) & (value <= high) {
         Ok(())
     } else {
@@ -62,45 +60,45 @@ fn reasonable_bounds(low: f32, high: f32, value: f32) -> Result<(), MoolahCoreEr
 pub trait Delta {
     fn name(&self) -> &str;
 
-    fn value(&self) -> f32;
+    fn value(&self) -> f64;
 
     fn uncertainty(&self) -> &Option<Uncertainty>;
 
     fn dates(&self) -> &[NaiveDate];
 
-    fn max_uncertainty_value(&self) -> f32 {
+    fn max_uncertainty_value(&self) -> f64 {
         match self.uncertainty() {
-            Some(Uncertainty::Balanced(UncertaintyType::Dollars(unc))) => self.value() + unc.value,
+            Some(Uncertainty::Balanced(UncertaintyType::Dollars(unc))) => self.value() + unc.0,
             Some(Uncertainty::Balanced(UncertaintyType::Percent(unc))) => {
-                self.value() + unc.value / 100.0 * self.value().abs()
+                self.value() + unc.0 / 100.0 * self.value().abs()
             }
             Some(Uncertainty::Unbalanced {
                 low: _,
                 high: UncertaintyType::Dollars(unc),
-            }) => self.value() + unc.value,
+            }) => self.value() + unc.0,
             Some(Uncertainty::Unbalanced {
                 low: _,
                 high: UncertaintyType::Percent(unc),
-            }) => self.value() + unc.value / 100.0 * self.value().abs(),
+            }) => self.value() + unc.0 / 100.0 * self.value().abs(),
             Some(Uncertainty::Bounds { low: _, high: unc }) => *unc,
             None => self.value(),
         }
     }
 
-    fn min_uncertainty_value(&self) -> f32 {
+    fn min_uncertainty_value(&self) -> f64 {
         match self.uncertainty() {
-            Some(Uncertainty::Balanced(UncertaintyType::Dollars(unc))) => self.value() - unc.value,
+            Some(Uncertainty::Balanced(UncertaintyType::Dollars(unc))) => self.value() - unc.0,
             Some(Uncertainty::Balanced(UncertaintyType::Percent(unc))) => {
-                self.value() - unc.value / 100.0 * self.value().abs()
+                self.value() - unc.0 / 100.0 * self.value().abs()
             }
             Some(Uncertainty::Unbalanced {
                 low: UncertaintyType::Dollars(unc),
                 high: _,
-            }) => self.value() - unc.value,
+            }) => self.value() - unc.0,
             Some(Uncertainty::Unbalanced {
                 low: UncertaintyType::Percent(unc),
                 high: _,
-            }) => self.value() - unc.value / 100.0 * self.value().abs(),
+            }) => self.value() - unc.0 / 100.0 * self.value().abs(),
             Some(Uncertainty::Bounds { low: unc, high: _ }) => *unc,
             None => self.value(),
         }
