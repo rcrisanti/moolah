@@ -4,7 +4,7 @@ use chrono::{Duration, Local};
 #[test]
 fn test_default() {
     let d = YearlyDelta::default();
-    let today = Local::today().naive_local();
+    let today = Local::now().date_naive();
 
     assert_eq!(d.name(), "");
     assert_eq!(d.value(), 0.0);
@@ -17,7 +17,7 @@ fn test_default() {
 
 #[test]
 fn test_start_cannot_be_later_than_end() {
-    let d = NaiveDate::from_ymd(2022, 11, 1);
+    let d = NaiveDate::from_ymd_opt(2022, 11, 1).unwrap();
     assert!(YearlyDelta::try_new(String::from("test"), 0.0, None, d, d, 0).is_ok());
     assert!(
         YearlyDelta::try_new(String::from("test"), 0.0, None, d, d - Duration::days(1), 0).is_err()
@@ -26,7 +26,7 @@ fn test_start_cannot_be_later_than_end() {
 
 #[test]
 fn test_reasonable_bounds() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     assert!(YearlyDelta::try_new(
         String::from("test"),
@@ -140,20 +140,20 @@ fn test_yearly_dates(
 #[test]
 fn test_falls_on_same_year_day_skip_years_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2025, 2, 28),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2029, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
-        NaiveDate::from_ymd(2031, 2, 28),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2025, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2029, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2031, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
         0,
         &expected_dates,
     );
@@ -162,16 +162,16 @@ fn test_falls_on_same_year_day_skip_years_0() {
 #[test]
 fn test_falls_on_same_year_day_skip_years_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2030, 2, 28),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
         1,
         &expected_dates,
     );
@@ -180,14 +180,14 @@ fn test_falls_on_same_year_day_skip_years_1() {
 #[test]
 fn test_falls_on_same_year_day_skip_years_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
         2,
         &expected_dates,
     );
@@ -196,14 +196,14 @@ fn test_falls_on_same_year_day_skip_years_2() {
 #[test]
 fn test_falls_on_same_year_day_skip_years_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
         3,
         &expected_dates,
     );
@@ -211,11 +211,11 @@ fn test_falls_on_same_year_day_skip_years_3() {
 
 #[test]
 fn test_falls_on_same_year_day_skip_years_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2024, 2, 29)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2024, 2, 29).unwrap()];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
         100,
         &expected_dates,
     );
@@ -225,20 +225,20 @@ fn test_falls_on_same_year_day_skip_years_100() {
 #[test]
 fn test_falls_before_year_day_skip_years_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2025, 2, 28),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2029, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
-        NaiveDate::from_ymd(2031, 2, 28),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2025, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2029, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2031, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 3, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 3, 17).unwrap(),
         0,
         &expected_dates,
     );
@@ -247,16 +247,16 @@ fn test_falls_before_year_day_skip_years_0() {
 #[test]
 fn test_falls_before_year_day_skip_years_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2030, 2, 28),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 3, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 3, 17).unwrap(),
         1,
         &expected_dates,
     );
@@ -265,14 +265,14 @@ fn test_falls_before_year_day_skip_years_1() {
 #[test]
 fn test_falls_before_year_day_skip_years_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 3, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 3, 17).unwrap(),
         2,
         &expected_dates,
     );
@@ -281,14 +281,14 @@ fn test_falls_before_year_day_skip_years_2() {
 #[test]
 fn test_falls_before_year_day_skip_years_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 3, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 3, 17).unwrap(),
         3,
         &expected_dates,
     );
@@ -296,11 +296,11 @@ fn test_falls_before_year_day_skip_years_3() {
 
 #[test]
 fn test_falls_before_year_day_skip_years_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2024, 2, 29)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2024, 2, 29).unwrap()];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 3, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 3, 17).unwrap(),
         100,
         &expected_dates,
     );
@@ -310,19 +310,19 @@ fn test_falls_before_year_day_skip_years_100() {
 #[test]
 fn test_falls_after_year_day_skip_years_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2025, 2, 28),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2029, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
-        NaiveDate::from_ymd(2031, 2, 28),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2025, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2029, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2031, 2, 28).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 17).unwrap(),
         0,
         &expected_dates,
     );
@@ -331,15 +331,15 @@ fn test_falls_after_year_day_skip_years_0() {
 #[test]
 fn test_falls_after_year_day_skip_years_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2026, 2, 28),
-        NaiveDate::from_ymd(2028, 2, 29),
-        NaiveDate::from_ymd(2030, 2, 28),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2026, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 17).unwrap(),
         1,
         &expected_dates,
     );
@@ -348,14 +348,14 @@ fn test_falls_after_year_day_skip_years_1() {
 #[test]
 fn test_falls_after_year_day_skip_years_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2027, 2, 28),
-        NaiveDate::from_ymd(2030, 2, 28),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2027, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2030, 2, 28).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 17).unwrap(),
         2,
         &expected_dates,
     );
@@ -364,13 +364,13 @@ fn test_falls_after_year_day_skip_years_2() {
 #[test]
 fn test_falls_after_year_day_skip_years_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2028, 2, 29),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2028, 2, 29).unwrap(),
     ];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 17).unwrap(),
         3,
         &expected_dates,
     );
@@ -378,11 +378,11 @@ fn test_falls_after_year_day_skip_years_3() {
 
 #[test]
 fn test_falls_after_year_day_skip_years_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2024, 2, 29)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2024, 2, 29).unwrap()];
 
     test_yearly_dates(
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2032, 2, 17),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2032, 2, 17).unwrap(),
         100,
         &expected_dates,
     );

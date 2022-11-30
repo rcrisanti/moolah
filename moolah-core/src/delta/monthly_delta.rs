@@ -1,7 +1,7 @@
 pub mod add_months;
 
 use super::{reasonable_bounds, Delta, Uncertainty};
-use crate::errors::MoolahCoreError;
+use crate::{date_helpers::naive_ymd, errors::MoolahCoreError};
 pub use add_months::MonthDay;
 use chrono::{Datelike, Local, NaiveDate};
 
@@ -18,7 +18,7 @@ pub struct MonthlyDelta {
 
 impl Default for MonthlyDelta {
     fn default() -> Self {
-        let today = Local::today().naive_local();
+        let today = Local::now().date_naive();
 
         MonthlyDelta {
             name: Default::default(),
@@ -38,18 +38,18 @@ fn build_dates(
     end: &NaiveDate,
     on_month_day: &MonthDay,
     every_months: u32,
-) -> Vec<NaiveDate> {
+) -> Result<Vec<NaiveDate>, MoolahCoreError> {
     let month_day: u32 = on_month_day.into();
     let start = if start.day() > month_day {
-        NaiveDate::from_ymd(start.year(), start.month() + 1, month_day)
+        naive_ymd(start.year(), start.month() + 1, month_day)?
     } else {
-        NaiveDate::from_ymd(start.year(), start.month(), month_day)
+        naive_ymd(start.year(), start.month(), month_day)?
     };
 
     let end = if end.day() >= on_month_day.into() {
-        NaiveDate::from_ymd(end.year(), end.month(), month_day)
+        naive_ymd(end.year(), end.month(), month_day)?
     } else {
-        NaiveDate::from_ymd(end.year(), end.month() - 1, month_day)
+        naive_ymd(end.year(), end.month() - 1, month_day)?
     };
 
     let year_diff = (end.year() - start.year()) * 12;
@@ -57,14 +57,14 @@ fn build_dates(
     let n_tot_months: i32 = year_diff + month_diff;
 
     if n_tot_months <= 0 {
-        return vec![];
+        return Ok(vec![]);
     }
     let n_months: u32 = n_tot_months as u32 / every_months;
 
     let target_month_day = *on_month_day;
-    (0..=n_months)
+    Ok((0..=n_months)
         .map(|month_num| target_month_day * (month_num * every_months) + start)
-        .collect()
+        .collect())
 }
 
 impl MonthlyDelta {
@@ -91,9 +91,9 @@ impl MonthlyDelta {
             uncertainty,
             start,
             end,
-            on_month_day: on_month_day.clone(),
+            on_month_day,
             skip_months,
-            dates: build_dates(&start, &end, &on_month_day, (skip_months + 1).into()),
+            dates: build_dates(&start, &end, &on_month_day, (skip_months + 1).into())?,
         })
     }
 

@@ -16,7 +16,7 @@ impl Default for Prediction {
     fn default() -> Self {
         Prediction {
             name: Default::default(),
-            start: Local::today().naive_local(),
+            start: Local::now().date_naive(),
             initial_value: Default::default(),
             deltas: Default::default(),
         }
@@ -64,7 +64,7 @@ pub(crate) struct AggregatedDelta<'a> {
 }
 
 impl<'a> AggregatedDelta<'a> {
-    pub fn update(&mut self, delta: &'a Box<dyn Delta>) {
+    pub fn update(&mut self, delta: &'a dyn Delta) {
         self.value += delta.value();
         self.min_uncertainty_val += delta.min_uncertainty_value();
         self.max_uncertainty_val += delta.max_uncertainty_value();
@@ -83,10 +83,10 @@ impl Prediction {
                 if (*date >= self.start) & (date <= end) {
                     deltas
                         .entry(*date)
-                        .and_modify(|pred_state| pred_state.update(&delta))
+                        .and_modify(|pred_state| pred_state.update(&**delta))
                         .or_insert_with(|| {
                             let mut pred = AggregatedDelta::default();
-                            pred.update(&delta);
+                            pred.update(&**delta);
                             pred
                         });
                 }
@@ -94,9 +94,7 @@ impl Prediction {
         }
 
         // Add in empty delta at start date if no deltas have been there
-        deltas
-            .entry(self.start)
-            .or_insert(AggregatedDelta::default());
+        deltas.entry(self.start).or_default();
 
         deltas
     }
@@ -160,7 +158,7 @@ impl Prediction {
         agg_deltas
             .iter()
             .scan(init_pred_state, |pred_state, (date, agg_delta)| {
-                *pred_state = PredictionState::from(&pred_state, &agg_delta);
+                *pred_state = PredictionState::from(pred_state, agg_delta);
                 Some((*date, pred_state.clone()))
             })
             .collect::<BTreeMap<_, _>>()

@@ -13,14 +13,10 @@ impl MonthDay {
             .clone()
             .try_into()
             .map_err(|_| MoolahCoreError::MonthDayOutOfRange(day.into()))?;
-        if value > 31 || value < 1 {
+        if !(1..=31).contains(&value) {
             return Err(MoolahCoreError::MonthDayOutOfRange(value.into()));
         }
-        Ok(MonthDay {
-            day: value
-                .try_into()
-                .expect("This should never panic bc you already checked the value"),
-        })
+        Ok(MonthDay { day: value })
     }
 }
 
@@ -54,15 +50,15 @@ impl TryFrom<i32> for MonthDay {
     }
 }
 
-impl Into<u32> for MonthDay {
-    fn into(self) -> u32 {
-        self.day.into()
+impl From<MonthDay> for u32 {
+    fn from(val: MonthDay) -> Self {
+        val.day.into()
     }
 }
 
-impl Into<u32> for &MonthDay {
-    fn into(self) -> u32 {
-        self.day.into()
+impl From<&MonthDay> for u32 {
+    fn from(val: &MonthDay) -> Self {
+        val.day.into()
     }
 }
 
@@ -152,37 +148,38 @@ mod tests {
 
     #[test]
     fn test_add_multi_months() {
-        let d = NaiveDate::from_ymd(2022, 10, 31);
+        let d = NaiveDate::from_ymd_opt(2022, 10, 31).unwrap();
 
         assert_eq!(
             MultiMonthDuration { n_months: 1 } + d,
-            NaiveDate::from_ymd(2022, 11, 30)
+            NaiveDate::from_ymd_opt(2022, 11, 30).unwrap()
         );
         assert_eq!(
             MultiMonthDuration { n_months: 2 } + d,
-            NaiveDate::from_ymd(2022, 12, 31)
+            NaiveDate::from_ymd_opt(2022, 12, 31).unwrap()
         );
         assert_eq!(
             MultiMonthDuration { n_months: 3 } + d,
-            NaiveDate::from_ymd(2023, 1, 31)
+            NaiveDate::from_ymd_opt(2023, 1, 31).unwrap()
         );
         assert_eq!(
             MultiMonthDuration { n_months: 4 } + d,
-            NaiveDate::from_ymd(2023, 2, 28)
+            NaiveDate::from_ymd_opt(2023, 2, 28).unwrap()
         );
         assert_eq!(
             MultiMonthDuration { n_months: 5 } + d,
-            NaiveDate::from_ymd(2023, 3, 31)
+            NaiveDate::from_ymd_opt(2023, 3, 31).unwrap()
         );
         assert_eq!(
             MultiMonthDuration { n_months: 16 } + d,
-            NaiveDate::from_ymd(2024, 2, 29) // leap year
+            NaiveDate::from_ymd_opt(2024, 2, 29).unwrap() // leap year
         );
     }
 
     #[test]
     #[should_panic]
     fn test_panic_add_month_over_max_recursion() {
-        let _ = MultiMonthDuration { n_months: 1 } + NaiveDate::from_ymd(400000, 10, 30);
+        let _ =
+            MultiMonthDuration { n_months: 1 } + NaiveDate::from_ymd_opt(400000, 10, 30).unwrap();
     }
 }

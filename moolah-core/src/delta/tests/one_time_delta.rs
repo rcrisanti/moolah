@@ -8,13 +8,13 @@ fn test_default() {
     assert_eq!(d.name(), "");
     assert_eq!(d.value(), 0.0);
     assert!(d.uncertainty().is_none());
-    assert_eq!(*d.date(), Local::today().naive_local());
-    assert_eq!(d.dates(), &[Local::today().naive_local()]);
+    assert_eq!(*d.date(), Local::now().date_naive());
+    assert_eq!(d.dates(), &[Local::now().date_naive()]);
 }
 
 #[test]
 fn test_dates() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
     let d = OneTimeDelta::try_new(String::from("test"), 1000.0, None, date)
         .expect("Could not build OneTimeDelta");
 
@@ -24,7 +24,7 @@ fn test_dates() {
 
 #[test]
 fn test_reasonable_bounds() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     assert!(OneTimeDelta::try_new(
         String::from("test"),
@@ -106,7 +106,7 @@ fn test_reasonable_bounds() {
 
 #[test]
 fn test_balanced_uncertainty() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     // dollar uncertainty w/ positive value
     let d = OneTimeDelta::try_new(

@@ -4,7 +4,7 @@ use chrono::{Duration, Local, Weekday};
 #[test]
 fn test_default() {
     let d = WeeklyDelta::default();
-    let today = Local::today().naive_local();
+    let today = Local::now().date_naive();
 
     assert_eq!(d.name(), "");
     assert_eq!(d.value(), 0.0);
@@ -18,7 +18,7 @@ fn test_default() {
 
 #[test]
 fn test_start_cannot_be_later_than_end() {
-    let d = NaiveDate::from_ymd(2022, 11, 1);
+    let d = NaiveDate::from_ymd_opt(2022, 11, 1).unwrap();
     assert!(
         WeeklyDelta::try_new(String::from("test"), 0.0, None, d, d, Some(Weekday::Mon), 0).is_ok()
     );
@@ -36,7 +36,7 @@ fn test_start_cannot_be_later_than_end() {
 
 #[test]
 fn test_reasonable_bounds() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     assert!(WeeklyDelta::try_new(
         String::from("test"),
@@ -167,16 +167,16 @@ fn test_weekly_dates(
 #[test]
 fn test_falls_on_weekday_skip_weeks_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2022, 12, 26),
-        NaiveDate::from_ymd(2023, 1, 2),
-        NaiveDate::from_ymd(2023, 1, 9),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 26).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 2).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 9).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         0,
         &expected_dates,
@@ -186,14 +186,14 @@ fn test_falls_on_weekday_skip_weeks_0() {
 #[test]
 fn test_falls_on_weekday_skip_weeks_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 2),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 2).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         1,
         &expected_dates,
@@ -203,13 +203,13 @@ fn test_falls_on_weekday_skip_weeks_1() {
 #[test]
 fn test_falls_on_weekday_skip_weeks_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 9),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 9).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         2,
         &expected_dates,
@@ -219,13 +219,13 @@ fn test_falls_on_weekday_skip_weeks_2() {
 #[test]
 fn test_falls_on_weekday_skip_weeks_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         3,
         &expected_dates,
@@ -234,11 +234,11 @@ fn test_falls_on_weekday_skip_weeks_3() {
 
 #[test]
 fn test_falls_on_weekday_skip_weeks_4() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 19)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 19).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         4,
         &expected_dates,
@@ -247,11 +247,11 @@ fn test_falls_on_weekday_skip_weeks_4() {
 
 #[test]
 fn test_falls_on_weekday_skip_weeks_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 19)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 19).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Mon),
         100,
         &expected_dates,
@@ -262,15 +262,15 @@ fn test_falls_on_weekday_skip_weeks_100() {
 #[test]
 fn test_falls_before_weekday_skip_weeks_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 21),
-        NaiveDate::from_ymd(2022, 12, 28),
-        NaiveDate::from_ymd(2023, 1, 4),
-        NaiveDate::from_ymd(2023, 1, 11),
+        NaiveDate::from_ymd_opt(2022, 12, 21).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 4).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 11).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Wed),
         0,
         &expected_dates,
@@ -280,13 +280,13 @@ fn test_falls_before_weekday_skip_weeks_0() {
 #[test]
 fn test_falls_before_weekday_skip_weeks_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 21),
-        NaiveDate::from_ymd(2023, 1, 4),
+        NaiveDate::from_ymd_opt(2022, 12, 21).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 4).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Wed),
         1,
         &expected_dates,
@@ -296,13 +296,13 @@ fn test_falls_before_weekday_skip_weeks_1() {
 #[test]
 fn test_falls_before_weekday_skip_weeks_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 21),
-        NaiveDate::from_ymd(2023, 1, 11),
+        NaiveDate::from_ymd_opt(2022, 12, 21).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 11).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Wed),
         2,
         &expected_dates,
@@ -311,11 +311,11 @@ fn test_falls_before_weekday_skip_weeks_2() {
 
 #[test]
 fn test_falls_before_weekday_skip_weeks_3() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 21)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 21).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Wed),
         3,
         &expected_dates,
@@ -324,11 +324,11 @@ fn test_falls_before_weekday_skip_weeks_3() {
 
 #[test]
 fn test_falls_before_weekday_skip_weeks_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 21)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 21).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 19),
-        NaiveDate::from_ymd(2023, 1, 16),
+        NaiveDate::from_ymd_opt(2022, 12, 19).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 16).unwrap(),
         Some(Weekday::Wed),
         100,
         &expected_dates,
@@ -339,15 +339,15 @@ fn test_falls_before_weekday_skip_weeks_100() {
 #[test]
 fn test_falls_after_weekday_skip_weeks_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 28),
-        NaiveDate::from_ymd(2023, 1, 4),
-        NaiveDate::from_ymd(2023, 1, 11),
-        NaiveDate::from_ymd(2023, 1, 18),
+        NaiveDate::from_ymd_opt(2022, 12, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 4).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 11).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 18).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 23),
-        NaiveDate::from_ymd(2023, 1, 21),
+        NaiveDate::from_ymd_opt(2022, 12, 23).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 21).unwrap(),
         Some(Weekday::Wed),
         0,
         &expected_dates,
@@ -357,13 +357,13 @@ fn test_falls_after_weekday_skip_weeks_0() {
 #[test]
 fn test_falls_after_weekday_skip_weeks_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 28),
-        NaiveDate::from_ymd(2023, 1, 11),
+        NaiveDate::from_ymd_opt(2022, 12, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 11).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 23),
-        NaiveDate::from_ymd(2023, 1, 21),
+        NaiveDate::from_ymd_opt(2022, 12, 23).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 21).unwrap(),
         Some(Weekday::Wed),
         1,
         &expected_dates,
@@ -373,13 +373,13 @@ fn test_falls_after_weekday_skip_weeks_1() {
 #[test]
 fn test_falls_after_weekday_skip_weeks_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 12, 28),
-        NaiveDate::from_ymd(2023, 1, 18),
+        NaiveDate::from_ymd_opt(2022, 12, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 18).unwrap(),
     ];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 23),
-        NaiveDate::from_ymd(2023, 1, 21),
+        NaiveDate::from_ymd_opt(2022, 12, 23).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 21).unwrap(),
         Some(Weekday::Wed),
         2,
         &expected_dates,
@@ -388,11 +388,11 @@ fn test_falls_after_weekday_skip_weeks_2() {
 
 #[test]
 fn test_falls_after_weekday_skip_weeks_3() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 28)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 28).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 23),
-        NaiveDate::from_ymd(2023, 1, 21),
+        NaiveDate::from_ymd_opt(2022, 12, 23).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 21).unwrap(),
         Some(Weekday::Wed),
         3,
         &expected_dates,
@@ -401,11 +401,11 @@ fn test_falls_after_weekday_skip_weeks_3() {
 
 #[test]
 fn test_falls_after_weekday_skip_weeks_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 12, 28)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 12, 28).unwrap()];
 
     test_weekly_dates(
-        NaiveDate::from_ymd(2022, 12, 23),
-        NaiveDate::from_ymd(2023, 1, 21),
+        NaiveDate::from_ymd_opt(2022, 12, 23).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 21).unwrap(),
         Some(Weekday::Wed),
         100,
         &expected_dates,

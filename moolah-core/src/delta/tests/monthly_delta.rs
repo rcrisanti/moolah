@@ -4,7 +4,7 @@ use chrono::{Duration, Local};
 #[test]
 fn test_default() {
     let d = MonthlyDelta::default();
-    let today = Local::today().naive_local();
+    let today = Local::now().date_naive();
 
     assert_eq!(d.name(), "");
     assert_eq!(d.value(), 0.0);
@@ -18,7 +18,7 @@ fn test_default() {
 
 #[test]
 fn test_start_cannot_be_later_than_end() {
-    let d = NaiveDate::from_ymd(2022, 11, 1);
+    let d = NaiveDate::from_ymd_opt(2022, 11, 1).unwrap();
     assert!(MonthlyDelta::try_new(
         String::from("test"),
         0.0,
@@ -43,7 +43,7 @@ fn test_start_cannot_be_later_than_end() {
 
 #[test]
 fn test_reasonable_bounds() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     assert!(MonthlyDelta::try_new(
         String::from("test"),
@@ -174,38 +174,38 @@ fn test_monthly_dates(
 #[test]
 fn test_falls_on_month_day_skip_months_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2022, 12, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 3, 30),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 5, 30),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 9, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2023, 12, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 3, 30),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 5, 30),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 9, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
         30.try_into().unwrap(),
         0,
         &expected_dates,
@@ -215,25 +215,25 @@ fn test_falls_on_month_day_skip_months_0() {
 #[test]
 fn test_falls_on_month_day_skip_months_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2022, 12, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2023, 12, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
         30.try_into().unwrap(),
         1,
         &expected_dates,
@@ -243,20 +243,20 @@ fn test_falls_on_month_day_skip_months_1() {
 #[test]
 fn test_falls_on_month_day_skip_months_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
         30.try_into().unwrap(),
         2,
         &expected_dates,
@@ -266,18 +266,18 @@ fn test_falls_on_month_day_skip_months_2() {
 #[test]
 fn test_falls_on_month_day_skip_months_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
         30.try_into().unwrap(),
         3,
         &expected_dates,
@@ -286,11 +286,11 @@ fn test_falls_on_month_day_skip_months_3() {
 
 #[test]
 fn test_falls_on_month_day_skip_months_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 10, 30)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 10, 30).unwrap()];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
         30.try_into().unwrap(),
         100,
         &expected_dates,
@@ -301,37 +301,37 @@ fn test_falls_on_month_day_skip_months_100() {
 #[test]
 fn test_falls_after_month_day_skip_months_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2022, 12, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 3, 30),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 5, 30),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 9, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2023, 12, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 3, 30),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 5, 30),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 9, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
-        NaiveDate::from_ymd(2024, 12, 30),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 31),
-        NaiveDate::from_ymd(2024, 12, 31),
+        NaiveDate::from_ymd_opt(2022, 10, 31).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
         30.try_into().unwrap(),
         0,
         &expected_dates,
@@ -341,24 +341,24 @@ fn test_falls_after_month_day_skip_months_0() {
 #[test]
 fn test_falls_after_month_day_skip_months_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 3, 30),
-        NaiveDate::from_ymd(2023, 5, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 9, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 3, 30),
-        NaiveDate::from_ymd(2024, 5, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 9, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 31),
-        NaiveDate::from_ymd(2024, 12, 31),
+        NaiveDate::from_ymd_opt(2022, 10, 31).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
         30.try_into().unwrap(),
         1,
         &expected_dates,
@@ -368,20 +368,20 @@ fn test_falls_after_month_day_skip_months_1() {
 #[test]
 fn test_falls_after_month_day_skip_months_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 5, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 5, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 31),
-        NaiveDate::from_ymd(2024, 12, 31),
+        NaiveDate::from_ymd_opt(2022, 10, 31).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
         30.try_into().unwrap(),
         2,
         &expected_dates,
@@ -391,18 +391,18 @@ fn test_falls_after_month_day_skip_months_2() {
 #[test]
 fn test_falls_after_month_day_skip_months_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2023, 3, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2024, 3, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 31),
-        NaiveDate::from_ymd(2024, 12, 31),
+        NaiveDate::from_ymd_opt(2022, 10, 31).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
         30.try_into().unwrap(),
         3,
         &expected_dates,
@@ -411,11 +411,11 @@ fn test_falls_after_month_day_skip_months_3() {
 
 #[test]
 fn test_falls_after_month_day_skip_months_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 11, 30)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 11, 30).unwrap()];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 31),
-        NaiveDate::from_ymd(2024, 12, 31),
+        NaiveDate::from_ymd_opt(2022, 10, 31).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 31).unwrap(),
         30.try_into().unwrap(),
         100,
         &expected_dates,
@@ -426,37 +426,37 @@ fn test_falls_after_month_day_skip_months_100() {
 #[test]
 fn test_falls_before_month_day_skip_months_0() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2022, 11, 30),
-        NaiveDate::from_ymd(2022, 12, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 3, 30),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 5, 30),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 9, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2023, 11, 30),
-        NaiveDate::from_ymd(2023, 12, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 3, 30),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 5, 30),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 9, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
-        NaiveDate::from_ymd(2024, 11, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 11, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 3, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 5, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 9, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 11, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 29),
-        NaiveDate::from_ymd(2024, 12, 12),
+        NaiveDate::from_ymd_opt(2022, 10, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 12).unwrap(),
         30.try_into().unwrap(),
         0,
         &expected_dates,
@@ -466,24 +466,24 @@ fn test_falls_before_month_day_skip_months_0() {
 #[test]
 fn test_falls_before_month_day_skip_months_1() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2022, 12, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 8, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2023, 12, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 8, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 12, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 8, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 29),
-        NaiveDate::from_ymd(2024, 12, 12),
+        NaiveDate::from_ymd_opt(2022, 10, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 12).unwrap(),
         30.try_into().unwrap(),
         1,
         &expected_dates,
@@ -493,20 +493,20 @@ fn test_falls_before_month_day_skip_months_1() {
 #[test]
 fn test_falls_before_month_day_skip_months_2() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2023, 1, 30),
-        NaiveDate::from_ymd(2023, 4, 30),
-        NaiveDate::from_ymd(2023, 7, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2024, 1, 30),
-        NaiveDate::from_ymd(2024, 4, 30),
-        NaiveDate::from_ymd(2024, 7, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 1, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 4, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 7, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 29),
-        NaiveDate::from_ymd(2024, 12, 12),
+        NaiveDate::from_ymd_opt(2022, 10, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 12).unwrap(),
         30.try_into().unwrap(),
         2,
         &expected_dates,
@@ -516,18 +516,18 @@ fn test_falls_before_month_day_skip_months_2() {
 #[test]
 fn test_falls_before_month_day_skip_months_3() {
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 30),
-        NaiveDate::from_ymd(2023, 2, 28),
-        NaiveDate::from_ymd(2023, 6, 30),
-        NaiveDate::from_ymd(2023, 10, 30),
-        NaiveDate::from_ymd(2024, 2, 29),
-        NaiveDate::from_ymd(2024, 6, 30),
-        NaiveDate::from_ymd(2024, 10, 30),
+        NaiveDate::from_ymd_opt(2022, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 2, 28).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2023, 10, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 2, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 6, 30).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 10, 30).unwrap(),
     ];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 29),
-        NaiveDate::from_ymd(2024, 12, 12),
+        NaiveDate::from_ymd_opt(2022, 10, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 12).unwrap(),
         30.try_into().unwrap(),
         3,
         &expected_dates,
@@ -536,11 +536,11 @@ fn test_falls_before_month_day_skip_months_3() {
 
 #[test]
 fn test_falls_before_month_day_skip_months_100() {
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 10, 30)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 10, 30).unwrap()];
 
     test_monthly_dates(
-        NaiveDate::from_ymd(2022, 10, 29),
-        NaiveDate::from_ymd(2024, 12, 12),
+        NaiveDate::from_ymd_opt(2022, 10, 29).unwrap(),
+        NaiveDate::from_ymd_opt(2024, 12, 12).unwrap(),
         30.try_into().unwrap(),
         100,
         &expected_dates,

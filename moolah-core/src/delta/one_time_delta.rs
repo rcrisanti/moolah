@@ -12,7 +12,7 @@ pub struct OneTimeDelta {
 
 impl Default for OneTimeDelta {
     fn default() -> Self {
-        let today = Local::today().naive_local();
+        let today = Local::now().date_naive();
         OneTimeDelta {
             name: Default::default(),
             value: Default::default(),

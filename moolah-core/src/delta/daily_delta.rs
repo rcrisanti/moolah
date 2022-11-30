@@ -14,7 +14,7 @@ pub struct DailyDelta {
 
 impl Default for DailyDelta {
     fn default() -> Self {
-        let today = Local::today().naive_local();
+        let today = Local::now().date_naive();
 
         DailyDelta {
             name: Default::default(),
@@ -29,7 +29,7 @@ impl Default for DailyDelta {
 }
 
 fn build_dates(start: &NaiveDate, end: &NaiveDate, every_days: i64) -> Vec<NaiveDate> {
-    let duration = Duration::days(every_days.into());
+    let duration = Duration::days(every_days);
     let n_days: i32 = ((*end - *start).num_days() / every_days)
         .try_into()
         .expect("Too many days");

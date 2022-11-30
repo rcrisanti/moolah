@@ -14,4 +14,7 @@ pub enum MoolahCoreError {
 
     #[error("month day `{0}` must be in range [1, 31]")]
     MonthDayOutOfRange(i64),
+
+    #[error("tried to form invalid date `{0}`")]
+    InvalidDate(String),
 }

@@ -17,7 +17,7 @@ pub struct YearlyDelta {
 
 impl Default for YearlyDelta {
     fn default() -> Self {
-        let today = Local::today().naive_local();
+        let today = Local::now().date_naive();
 
         YearlyDelta {
             name: Default::default(),
@@ -31,7 +31,11 @@ impl Default for YearlyDelta {
     }
 }
 
-fn build_dates(start: &NaiveDate, end: &NaiveDate, every_years: u16) -> Vec<NaiveDate> {
+fn build_dates(
+    start: &NaiveDate,
+    end: &NaiveDate,
+    every_years: u16,
+) -> Result<Vec<NaiveDate>, MoolahCoreError> {
     let date_offset = if (end.month() < start.month())
         | ((end.month() == start.month()) & (end.day() < start.day()))
     {
@@ -43,7 +47,7 @@ fn build_dates(start: &NaiveDate, end: &NaiveDate, every_years: u16) -> Vec<Naiv
     let n_years: u32 = n_years.try_into().unwrap_or_default();
 
     (0..=n_years)
-        .map(|year_num| MultiYearDuration::new(every_years as u32 * year_num) + *start)
+        .map(|year_num| MultiYearDuration::new(every_years as u32 * year_num).try_add(*start))
         .collect()
 }
 
@@ -71,7 +75,7 @@ impl YearlyDelta {
             start,
             end,
             skip_years,
-            dates: build_dates(&start, &end, (skip_years + 1).into()),
+            dates: build_dates(&start, &end, skip_years + 1)?,
         })
     }
 

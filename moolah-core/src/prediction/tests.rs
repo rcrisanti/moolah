@@ -1,4 +1,5 @@
 use super::*;
+use crate::date_helpers::naive_ymd;
 use crate::delta::{
     CustomDelta, DailyDelta, MonthlyDelta, OneTimeDelta, Uncertainty, UncertaintyType, WeeklyDelta,
     YearlyDelta,
@@ -10,15 +11,15 @@ use std::fmt::Debug;
 fn test_all_deltas_insertable() {
     let p = Prediction::new(
         String::from("test"),
-        NaiveDate::from_ymd(2022, 10, 10),
+        naive_ymd(2022, 10, 10).unwrap(),
         1000.0,
         vec![
-            Box::new(DailyDelta::default()),
-            Box::new(OneTimeDelta::default()),
-            Box::new(WeeklyDelta::default()),
-            Box::new(MonthlyDelta::default()),
-            Box::new(YearlyDelta::default()),
-            Box::new(CustomDelta::default()),
+            Box::<DailyDelta>::default(),
+            Box::<OneTimeDelta>::default(),
+            Box::<WeeklyDelta>::default(),
+            Box::<MonthlyDelta>::default(),
+            Box::<YearlyDelta>::default(),
+            Box::<CustomDelta>::default(),
         ],
     );
 
@@ -52,39 +53,34 @@ fn assert_btrees_eq<K: Debug + PartialEq, V: Debug + PartialEq>(
 #[test]
 fn test_no_deltas() {
     let p = Prediction::default();
-    let pred = p.predict(&Local::today().naive_local());
+    let pred = p.predict(&Local::now().date_naive());
 
-    let expected = BTreeMap::from([(Local::today().naive_local(), PredictionState::default())]);
+    let expected = BTreeMap::from([(Local::now().date_naive(), PredictionState::default())]);
     assert_btrees_eq(&expected, &pred);
 }
 
 #[test]
 fn test_1_delta() {
-    let start_pred = NaiveDate::from_ymd(2022, 10, 28);
+    let start_pred = naive_ymd(2022, 10, 28).unwrap();
     let p = Prediction {
         start: start_pred,
         initial_value: 500.0,
         deltas: vec![Box::new(
-            OneTimeDelta::try_new(
-                "test".into(),
-                100.0,
-                None,
-                NaiveDate::from_ymd(2022, 10, 31),
-            )
-            .unwrap(),
+            OneTimeDelta::try_new("test".into(), 100.0, None, naive_ymd(2022, 10, 31).unwrap())
+                .unwrap(),
         )],
         ..Default::default()
     };
 
-    let end_pred = NaiveDate::from_ymd(2022, 11, 1);
+    let end_pred = naive_ymd(2022, 11, 1).unwrap();
 
     let expected = BTreeMap::from([
         (
-            NaiveDate::from_ymd(2022, 10, 28),
+            naive_ymd(2022, 10, 28).unwrap(),
             PredictionState::new(500.0, 500.0, 500.0, [].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 10, 31),
+            naive_ymd(2022, 10, 31).unwrap(),
             PredictionState::new(600.0, 600.0, 600.0, ["test".into()].into()),
         ),
     ]);
@@ -94,7 +90,7 @@ fn test_1_delta() {
 
 #[test]
 fn test_2_deltas_balanced_uncertainty() {
-    let start_pred = NaiveDate::from_ymd(2022, 10, 28);
+    let start_pred = naive_ymd(2022, 10, 28).unwrap();
     let p = Prediction {
         start: start_pred,
         initial_value: 500.0,
@@ -106,7 +102,7 @@ fn test_2_deltas_balanced_uncertainty() {
                     Some(Uncertainty::Balanced(UncertaintyType::Dollars(
                         15.0.try_into().unwrap(),
                     ))),
-                    NaiveDate::from_ymd(2022, 10, 31),
+                    naive_ymd(2022, 10, 31).unwrap(),
                 )
                 .unwrap(),
             ),
@@ -117,7 +113,7 @@ fn test_2_deltas_balanced_uncertainty() {
                     Some(Uncertainty::Balanced(UncertaintyType::Percent(
                         5.0.try_into().unwrap(),
                     ))),
-                    NaiveDate::from_ymd(2022, 10, 31),
+                    naive_ymd(2022, 10, 31).unwrap(),
                 )
                 .unwrap(),
             ),
@@ -125,15 +121,15 @@ fn test_2_deltas_balanced_uncertainty() {
         ..Default::default()
     };
 
-    let end_pred = NaiveDate::from_ymd(2022, 11, 1);
+    let end_pred = naive_ymd(2022, 11, 1).unwrap();
 
     let expected = BTreeMap::from([
         (
-            NaiveDate::from_ymd(2022, 10, 28),
+            naive_ymd(2022, 10, 28).unwrap(),
             PredictionState::new(500.0, 500.0, 500.0, [].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 10, 31),
+            naive_ymd(2022, 10, 31).unwrap(),
             PredictionState::new(
                 800.0,
                 780.0,
@@ -148,7 +144,7 @@ fn test_2_deltas_balanced_uncertainty() {
 
 #[test]
 fn test_2_deltas_unbalanced_uncertainty() {
-    let start_pred = NaiveDate::from_ymd(2022, 10, 28);
+    let start_pred = naive_ymd(2022, 10, 28).unwrap();
     let p = Prediction {
         start: start_pred,
         initial_value: 500.0,
@@ -161,7 +157,7 @@ fn test_2_deltas_unbalanced_uncertainty() {
                         low: UncertaintyType::Dollars(15.0.try_into().unwrap()),
                         high: UncertaintyType::Percent(10.0.try_into().unwrap()),
                     }),
-                    NaiveDate::from_ymd(2022, 10, 31),
+                    naive_ymd(2022, 10, 31).unwrap(),
                 )
                 .unwrap(),
             ),
@@ -173,7 +169,7 @@ fn test_2_deltas_unbalanced_uncertainty() {
                         low: UncertaintyType::Percent(5.0.try_into().unwrap()),
                         high: UncertaintyType::Dollars(5.0.try_into().unwrap()),
                     }),
-                    NaiveDate::from_ymd(2022, 10, 31),
+                    naive_ymd(2022, 10, 31).unwrap(),
                 )
                 .unwrap(),
             ),
@@ -181,15 +177,15 @@ fn test_2_deltas_unbalanced_uncertainty() {
         ..Default::default()
     };
 
-    let end_pred = NaiveDate::from_ymd(2022, 11, 1);
+    let end_pred = naive_ymd(2022, 11, 1).unwrap();
 
     let expected = BTreeMap::from([
         (
-            NaiveDate::from_ymd(2022, 10, 28),
+            naive_ymd(2022, 10, 28).unwrap(),
             PredictionState::new(500.0, 500.0, 500.0, [].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 10, 31),
+            naive_ymd(2022, 10, 31).unwrap(),
             PredictionState::new(
                 800.0,
                 780.0,
@@ -204,7 +200,7 @@ fn test_2_deltas_unbalanced_uncertainty() {
 
 #[test]
 fn test_prediction_all_delta_types() {
-    let start_pred = NaiveDate::from_ymd(2022, 10, 28);
+    let start_pred = naive_ymd(2022, 10, 28).unwrap();
     let p = Prediction {
         start: start_pred,
         deltas: vec![
@@ -216,7 +212,7 @@ fn test_prediction_all_delta_types() {
                         low: UncertaintyType::Dollars(15.0.try_into().unwrap()),
                         high: UncertaintyType::Percent(10.0.try_into().unwrap()),
                     }),
-                    NaiveDate::from_ymd(2022, 10, 31),
+                    naive_ymd(2022, 10, 31).unwrap(),
                 )
                 .unwrap(),
             ),
@@ -225,8 +221,8 @@ fn test_prediction_all_delta_types() {
                     "yearly".into(),
                     -155.0,
                     None,
-                    NaiveDate::from_ymd(2022, 7, 1),
-                    NaiveDate::from_ymd(2024, 12, 14),
+                    naive_ymd(2022, 7, 1).unwrap(),
+                    naive_ymd(2024, 12, 14).unwrap(),
                     0,
                 )
                 .unwrap(),
@@ -239,7 +235,7 @@ fn test_prediction_all_delta_types() {
                         12.0.try_into().unwrap(),
                     ))),
                     start_pred,
-                    NaiveDate::from_ymd(2022, 12, 31),
+                    naive_ymd(2022, 12, 31).unwrap(),
                     3.try_into().unwrap(),
                     1,
                 )
@@ -250,8 +246,8 @@ fn test_prediction_all_delta_types() {
                     "weekly".into(),
                     -13.0,
                     None,
-                    NaiveDate::from_ymd(2022, 11, 3),
-                    NaiveDate::from_ymd(2022, 12, 12),
+                    naive_ymd(2022, 11, 3).unwrap(),
+                    naive_ymd(2022, 12, 12).unwrap(),
                     Some(Weekday::Wed),
                     1,
                 )
@@ -262,8 +258,8 @@ fn test_prediction_all_delta_types() {
                     "daily".into(),
                     1.0,
                     None,
-                    NaiveDate::from_ymd(2022, 11, 22),
-                    NaiveDate::from_ymd(2022, 12, 7),
+                    naive_ymd(2022, 11, 22).unwrap(),
+                    naive_ymd(2022, 12, 7).unwrap(),
                     2,
                 )
                 .unwrap(),
@@ -277,8 +273,8 @@ fn test_prediction_all_delta_types() {
                         high: -12.0,
                     }),
                     vec![
-                        NaiveDate::from_ymd(2022, 11, 12),
-                        NaiveDate::from_ymd(2022, 12, 1),
+                        naive_ymd(2022, 11, 12).unwrap(),
+                        naive_ymd(2022, 12, 1).unwrap(),
                     ],
                 )
                 .unwrap(),
@@ -287,47 +283,43 @@ fn test_prediction_all_delta_types() {
         ..Default::default()
     };
 
-    let end_pred = NaiveDate::from_ymd(2023, 8, 1);
-
+    let end_pred = naive_ymd(2023, 8, 1).unwrap();
     let expected = BTreeMap::from([
+        (naive_ymd(2022, 10, 28).unwrap(), PredictionState::default()),
         (
-            NaiveDate::from_ymd(2022, 10, 28),
-            PredictionState::default(),
-        ),
-        (
-            NaiveDate::from_ymd(2022, 10, 31),
+            naive_ymd(2022, 10, 31).unwrap(),
             PredictionState::new(200.0, 185.0, 220.0, ["one time".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 3),
+            naive_ymd(2022, 11, 3).unwrap(),
             PredictionState::new(1434.0, 1407.0, 1466.0, ["monthly".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 9),
+            naive_ymd(2022, 11, 9).unwrap(),
             PredictionState::new(1421.0, 1394.0, 1453.0, ["weekly".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 12),
+            naive_ymd(2022, 11, 12).unwrap(),
             PredictionState::new(1406.0, 1374.0, 1441.0, ["custom".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 22),
+            naive_ymd(2022, 11, 22).unwrap(),
             PredictionState::new(1407.0, 1375.0, 1442.0, ["daily".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 23),
+            naive_ymd(2022, 11, 23).unwrap(),
             PredictionState::new(1394.0, 1362.0, 1429.0, ["weekly".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 25),
+            naive_ymd(2022, 11, 25).unwrap(),
             PredictionState::new(1395.0, 1363.0, 1430.0, ["daily".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 11, 28),
+            naive_ymd(2022, 11, 28).unwrap(),
             PredictionState::new(1396.0, 1364.0, 1431.0, ["daily".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 12, 1),
+            naive_ymd(2022, 12, 1).unwrap(),
             PredictionState::new(
                 1382.0,
                 1345.0,
@@ -336,11 +328,11 @@ fn test_prediction_all_delta_types() {
             ),
         ),
         (
-            NaiveDate::from_ymd(2022, 12, 4),
+            naive_ymd(2022, 12, 4).unwrap(),
             PredictionState::new(1383.0, 1346.0, 1421.0, ["daily".into()].into()),
         ),
         (
-            NaiveDate::from_ymd(2022, 12, 7),
+            naive_ymd(2022, 12, 7).unwrap(),
             PredictionState::new(
                 1371.0,
                 1334.0,
@@ -349,7 +341,7 @@ fn test_prediction_all_delta_types() {
             ),
         ),
         (
-            NaiveDate::from_ymd(2023, 7, 1),
+            naive_ymd(2023, 7, 1).unwrap(),
             PredictionState::new(1216.0, 1179.0, 1254.0, ["yearly".into()].into()),
         ),
     ]);

@@ -1,6 +1,6 @@
-use std::ops::Add;
-
 use chrono::{Datelike, NaiveDate};
+
+use crate::{date_helpers::naive_ymd, errors::MoolahCoreError};
 
 #[derive(Clone, Copy)]
 pub struct MultiYearDuration {
@@ -11,23 +11,19 @@ impl MultiYearDuration {
     pub fn new(n_years: u32) -> Self {
         MultiYearDuration { n_years }
     }
-}
 
-impl Add<NaiveDate> for MultiYearDuration {
-    type Output = NaiveDate;
-
-    fn add(self, rhs: NaiveDate) -> Self::Output {
+    pub fn try_add(self, rhs: NaiveDate) -> Result<NaiveDate, MoolahCoreError> {
         let mut date = YearAdded::Exact(rhs);
         for _ in 0..self.n_years {
-            date = add_year(&date, 0);
+            date = add_year(&date, 0)?;
         }
-        match date {
+        Ok(match date {
             YearAdded::Exact(date) => date,
             YearAdded::Rounded {
                 date,
                 target_day: _,
             } => date,
-        }
+        })
     }
 }
 
@@ -37,7 +33,7 @@ enum YearAdded {
 }
 
 const MAX_RECURSION: usize = 2;
-fn add_year(year_added: &YearAdded, recursion_level: usize) -> YearAdded {
+fn add_year(year_added: &YearAdded, recursion_level: usize) -> Result<YearAdded, MoolahCoreError> {
     if recursion_level >= MAX_RECURSION {
         panic!("Reached max recursion level - this most likely means an impossible date was attempted to be created");
     }
@@ -56,23 +52,23 @@ fn add_year(year_added: &YearAdded, recursion_level: usize) -> YearAdded {
     if (date.month() == 2) & (day == 29) {
         // handle leap years
         match NaiveDate::from_ymd_opt(date.year() + 1, date.month(), day) {
-            Some(date) => YearAdded::Exact(date),
+            Some(date) => Ok(YearAdded::Exact(date)),
             None => add_year(
                 &YearAdded::Rounded {
-                    date: NaiveDate::from_ymd(date.year(), date.month(), day - 1),
+                    date: naive_ymd(date.year(), date.month(), day - 1)?,
                     target_day,
                 },
                 recursion_level + 1,
             ),
         }
     } else {
-        let date = NaiveDate::from_ymd(date.year() + 1, date.month(), date.day());
+        let date = naive_ymd(date.year() + 1, date.month(), date.day())?;
         match year_added {
-            &YearAdded::Exact(_) => YearAdded::Exact(date),
-            &YearAdded::Rounded {
+            YearAdded::Exact(_) => Ok(YearAdded::Exact(date)),
+            YearAdded::Rounded {
                 date: _,
                 target_day: _,
-            } => YearAdded::Rounded { date, target_day },
+            } => Ok(YearAdded::Rounded { date, target_day }),
         }
     }
 }

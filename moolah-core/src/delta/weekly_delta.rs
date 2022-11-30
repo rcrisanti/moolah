@@ -15,7 +15,7 @@ pub struct WeeklyDelta {
 
 impl Default for WeeklyDelta {
     fn default() -> Self {
-        let today = Local::today().naive_local();
+        let today = Local::now().date_naive();
 
         WeeklyDelta {
             name: Default::default(),
@@ -58,8 +58,8 @@ fn build_dates(
     on_weekday: &Weekday,
     every_weeks: i64,
 ) -> Vec<NaiveDate> {
-    let start = round_up_to_next_weekday(&start, &on_weekday);
-    let end = round_back_to_prev_weekday(&end, &on_weekday);
+    let start = round_up_to_next_weekday(start, on_weekday);
+    let end = round_back_to_prev_weekday(end, on_weekday);
     let duration = Duration::weeks(every_weeks);
     let n_weeks: i32 = ((end - start).num_weeks() / every_weeks)
         .try_into()
@@ -143,67 +143,67 @@ mod private_functions {
 
     #[test]
     fn test_round_date_up() {
-        let date = NaiveDate::from_ymd(2022, 11, 2); // a Wednesday
+        let date = NaiveDate::from_ymd_opt(2022, 11, 2).unwrap(); // a Wednesday
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Mon),
-            NaiveDate::from_ymd(2022, 11, 7)
+            NaiveDate::from_ymd_opt(2022, 11, 7).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Tue),
-            NaiveDate::from_ymd(2022, 11, 8)
+            NaiveDate::from_ymd_opt(2022, 11, 8).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Wed),
-            NaiveDate::from_ymd(2022, 11, 2)
+            NaiveDate::from_ymd_opt(2022, 11, 2).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Thu),
-            NaiveDate::from_ymd(2022, 11, 3)
+            NaiveDate::from_ymd_opt(2022, 11, 3).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Fri),
-            NaiveDate::from_ymd(2022, 11, 4)
+            NaiveDate::from_ymd_opt(2022, 11, 4).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Sat),
-            NaiveDate::from_ymd(2022, 11, 5)
+            NaiveDate::from_ymd_opt(2022, 11, 5).unwrap()
         );
         assert_eq!(
             round_up_to_next_weekday(&date, &Weekday::Sun),
-            NaiveDate::from_ymd(2022, 11, 6)
+            NaiveDate::from_ymd_opt(2022, 11, 6).unwrap()
         );
     }
 
     #[test]
     fn test_round_date_back() {
-        let date = NaiveDate::from_ymd(2022, 11, 2); // a Wednesday
+        let date = NaiveDate::from_ymd_opt(2022, 11, 2).unwrap(); // a Wednesday
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Mon),
-            NaiveDate::from_ymd(2022, 10, 31)
+            NaiveDate::from_ymd_opt(2022, 10, 31).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Tue),
-            NaiveDate::from_ymd(2022, 11, 1)
+            NaiveDate::from_ymd_opt(2022, 11, 1).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Wed),
-            NaiveDate::from_ymd(2022, 11, 2)
+            NaiveDate::from_ymd_opt(2022, 11, 2).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Thu),
-            NaiveDate::from_ymd(2022, 10, 27)
+            NaiveDate::from_ymd_opt(2022, 10, 27).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Fri),
-            NaiveDate::from_ymd(2022, 10, 28)
+            NaiveDate::from_ymd_opt(2022, 10, 28).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Sat),
-            NaiveDate::from_ymd(2022, 10, 29)
+            NaiveDate::from_ymd_opt(2022, 10, 29).unwrap()
         );
         assert_eq!(
             round_back_to_prev_weekday(&date, &Weekday::Sun),
-            NaiveDate::from_ymd(2022, 10, 30)
+            NaiveDate::from_ymd_opt(2022, 10, 30).unwrap()
         );
     }
 }

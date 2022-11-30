@@ -5,7 +5,7 @@ use super::*;
 #[test]
 fn test_default() {
     let d = DailyDelta::default();
-    let today = Local::today().naive_local();
+    let today = Local::now().date_naive();
 
     assert_eq!(d.name(), "");
     assert_eq!(d.value(), 0.0);
@@ -18,7 +18,7 @@ fn test_default() {
 
 #[test]
 fn test_start_cannot_be_later_than_end() {
-    let d = NaiveDate::from_ymd(2022, 11, 1);
+    let d = NaiveDate::from_ymd_opt(2022, 11, 1).unwrap();
     assert!(DailyDelta::try_new(String::from("test"), 0.0, None, d, d, 0).is_ok());
     assert!(
         DailyDelta::try_new(String::from("test"), 0.0, None, d, d - Duration::days(1), 0).is_err()
@@ -27,7 +27,7 @@ fn test_start_cannot_be_later_than_end() {
 
 #[test]
 fn test_reasonable_bounds() {
-    let date = NaiveDate::from_ymd(2022, 10, 30);
+    let date = NaiveDate::from_ymd_opt(2022, 10, 30).unwrap();
 
     assert!(DailyDelta::try_new(
         String::from("test"),
@@ -127,18 +127,18 @@ fn skip_days_0() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         0,
     )
     .expect("couldn't make daily delta");
 
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 2),
-        NaiveDate::from_ymd(2022, 10, 3),
-        NaiveDate::from_ymd(2022, 10, 4),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 2).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 3).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 4).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
     ];
 
     let dates = d.dates();
@@ -154,16 +154,16 @@ fn skip_days_1() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         1,
     )
     .expect("couldn't make daily delta");
 
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 3),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 3).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
     ];
 
     let dates = d.dates();
@@ -179,15 +179,15 @@ fn skip_days_2() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         2,
     )
     .expect("couldn't make daily delta");
 
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 4),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 4).unwrap(),
     ];
 
     let dates = d.dates();
@@ -203,15 +203,15 @@ fn skip_days_3() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         3,
     )
     .expect("couldn't make daily delta");
 
     let expected_dates = vec![
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
     ];
 
     let dates = d.dates();
@@ -227,13 +227,13 @@ fn skip_days_4() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         4,
     )
     .expect("couldn't make daily delta");
 
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 10, 1)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 10, 1).unwrap()];
 
     let dates = d.dates();
     for date in expected_dates.iter() {
@@ -248,13 +248,13 @@ fn skip_days_100() {
         String::from("test"),
         1000.0,
         None,
-        NaiveDate::from_ymd(2022, 10, 1),
-        NaiveDate::from_ymd(2022, 10, 5),
+        NaiveDate::from_ymd_opt(2022, 10, 1).unwrap(),
+        NaiveDate::from_ymd_opt(2022, 10, 5).unwrap(),
         100,
     )
     .expect("couldn't make daily delta");
 
-    let expected_dates = vec![NaiveDate::from_ymd(2022, 10, 1)];
+    let expected_dates = vec![NaiveDate::from_ymd_opt(2022, 10, 1).unwrap()];
 
     let dates = d.dates();
     for date in expected_dates.iter() {
